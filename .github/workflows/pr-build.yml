@@ -1,7 +1,9 @@
 name: Build 
+
 on:
   pull_request:
     branches: [development, master]   
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,10 +17,8 @@ jobs:
         with:
           dotnet-version: '8.0.x'  
 
-      - name: Restore dependencies         
-	run: dotnet restore src/back-end/TaskApp.Api/TaskApp.Api.csproj
-
+      - name: Restore dependencies 
+        run: dotnet restore src/back-end/TaskApp.Api/TaskApp.Api.csproj
 
       - name: Build project
         run: dotnet build src/back-end/TaskApp.Api/TaskApp.Api.csproj --no-restore --configuration Release
-
