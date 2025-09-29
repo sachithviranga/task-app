@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskApp.Application.Interface;
 using TaskApp.Domain.Model;
 using TaskApp.Infrastructure.Data;
-using TaskApp.Infrastructure.Entities;
+using TaskApp.Infrastructure.Mapping;
 
 namespace TaskApp.Infrastructure.Repositories
 {
@@ -18,25 +18,8 @@ namespace TaskApp.Infrastructure.Repositories
         public async Task<IEnumerable<Status>> GetAllAsync()
         {
             var entities = await _context.Statuses.ToListAsync();
-            return entities.Select(MapToDomain);
+            return entities.Select(StatusMapping.MapToDomain);
         }
 
-        private static Status MapToDomain(StatusEntity entity)
-        {
-            return new Status
-            {
-                Id = entity.Id,
-                Name = entity.Name
-            };
-        }
-
-        private static StatusEntity MapToEntity(Status domain)
-        {
-            return new StatusEntity
-            {
-                Id = domain.Id,
-                Name = domain.Name
-            };
-        }
     }
 }

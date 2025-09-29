@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using TaskApp.Application.Interface;
+using TaskApp.Application.Mapping;
 using TaskApp.Domain.Model;
 using TaskApp.Shared.DTO;
 
@@ -20,14 +21,14 @@ namespace TaskApp.Application.Services
         {
             _logger.LogDebug("Fetching all tasks from repository");
 			var tasks = await _tasksRepository.GetAllAsync();
-            return tasks.Select(MapToDto);
+            return tasks.Select(TasksMapping.MapToDto);
         }
 
         public async Task<TasksDto?> GetByIdAsync(Guid id)
         {
             _logger.LogDebug("Fetching task by id {Id}", id);
 			var task = await _tasksRepository.GetByIdAsync(id);
-            return task != null ? MapToDto(task) : null;
+            return task != null ? TasksMapping.MapToDto(task) : null;
         }
 
         public async Task<TasksDto> CreateAsync(CreateTasksDto createDto)
@@ -42,7 +43,7 @@ namespace TaskApp.Application.Services
             };
             _logger.LogInformation("Creating task {Title}", createDto.Title);
             var createdTask = await _tasksRepository.CreateAsync(task);
-            return MapToDto(createdTask);
+            return TasksMapping.MapToDto(createdTask);
         }
 
         public async Task<TasksDto> UpdateAsync(UpdateTasksDto updateDto)
@@ -56,7 +57,7 @@ namespace TaskApp.Application.Services
             };
             _logger.LogInformation("Updating task {Id}", updateDto.Id);
             var updatedTask = await _tasksRepository.UpdateAsync(task);
-            return MapToDto(updatedTask);
+            return TasksMapping.MapToDto(updatedTask);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
@@ -65,18 +66,6 @@ namespace TaskApp.Application.Services
 			return await _tasksRepository.DeleteAsync(id);
         }
 
-        private TasksDto MapToDto(Tasks task)
-        {
-            return new TasksDto
-            {
-                Id = task.Id,
-                Title = task.Title,
-                Description = task.Description,
-                StatusId = task.StatusId,
-                StatusName = task.Status?.Name ?? string.Empty,
-                CreatedAt = task.CreatedAt,
-                UpdatedAt = task.UpdatedAt
-            };
-        }
+
     }
 }
