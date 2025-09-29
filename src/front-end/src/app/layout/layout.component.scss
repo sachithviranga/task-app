@@ -1,0 +1,21 @@
+.layout-container {
+  margin: auto;
+  max-width: 95%;
+}
+
+mat-grid-tile {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-grid-tile-list{
+   display: flex;
+  flex-direction: column;
+  justify-content: flex-start; 
+  align-items: flex-start;     
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

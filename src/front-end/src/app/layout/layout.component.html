@@ -1,0 +1,19 @@
+<mat-toolbar color="primary">
+  Task Manager
+  <span class="spacer"></span>
+  <button mat-button (click)="onLogout()">
+    <mat-icon>logout</mat-icon>
+    Logout
+  </button>
+</mat-toolbar>
+
+<div class="layout-container">
+  <mat-grid-list [cols]="cols$ | async" rowHeight="1:1" gutterSize="16px">
+    <mat-grid-tile>
+      <app-task-list (edit)="onTaskEdit($event)"></app-task-list>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <app-task-form [task]="selectedTask" (taskSaved)="onTaskFormReset()" (formReset)="onTaskFormReset()"></app-task-form>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

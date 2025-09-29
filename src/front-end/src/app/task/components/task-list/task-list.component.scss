@@ -1,0 +1,78 @@
+.task-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+
+  .filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .filter-field {
+      min-width: 200px;
+      flex: 1;
+    }
+  }
+
+  .list-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    overflow: scroll;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    height: 400px;
+  }
+}
+
+mat-list-item {
+  padding: 12px 16px;
+  align-items: flex-start;
+
+  .list-item-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-right: 1rem;
+  }
+
+  .inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .title {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .description {
+    font-size: 15px;
+    color: #444;
+  }
+
+  .status {
+    font-size: 13px;
+    color: gray;
+    margin-top: 2px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 2px;
+  }
+}

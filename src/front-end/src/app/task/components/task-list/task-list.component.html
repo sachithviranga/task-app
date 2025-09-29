@@ -1,0 +1,73 @@
+<div class="task-container">
+
+  <!-- Filters -->
+  <div class="filters">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Sort by</mat-label>
+      <mat-select [(value)]="sortField" (selectionChange)="onSortChange($event.value)">
+        <mat-option value="createdAt">Created Date</mat-option>
+        <mat-option value="title">Title</mat-option>
+        <mat-option value="statusId">Status</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Filter by Status</mat-label>
+      <mat-select [(value)]="statusFilter" (selectionChange)="onFilterChange($event.value)">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option *ngFor="let status of statuses$ | async" [value]="status.id">
+          {{ status.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Task List -->
+  <div class="list-container">
+
+    <!-- Loading State -->
+    <div *ngIf="loading$ | async" class="text-center p-4">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p class="mt-2">Loading tasks...</p>
+    </div>
+
+    <!-- List or Empty State -->
+    <ng-container *ngIf="filteredTasks$ | async as tasks">
+      
+      <!-- Non-Empty List -->
+      <mat-list *ngIf="tasks.length > 0; else emptyState">
+        <mat-list-item *ngFor="let task of tasks; trackBy: trackByTaskId">
+          <div class="list-item-wrapper">
+            
+            <!-- Left: Task Info -->
+            <div class="content">
+              <div class="inline">
+                <span class="title">{{ task.title }}</span>
+                <span class="description"> — {{ task.description }}</span>
+              </div>
+              <div class="status">Status: {{ task.statusId | taskStatus }}</div>
+            </div>
+
+            <!-- Right: Actions -->
+            <div class="actions" *ngIf="task.statusId !== 3 && task.statusId !== 4">
+              <button mat-icon-button (click)="editTask(task)" matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteTask(task.id)" matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-list-item>
+      </mat-list>
+
+      <!-- Empty List -->
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <h3>No tasks found</h3>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+</div>
