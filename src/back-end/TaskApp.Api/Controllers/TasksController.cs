@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TaskApp.Application.Interface;
 using TaskApp.Shared.DTO;
 
@@ -11,15 +12,17 @@ namespace TaskApp.Api.Controllers
 	/// </summary>
     public class TasksController : ControllerBase
     {
-        private readonly ITasksService _tasksService;
+		private readonly ITasksService _tasksService;
+		private readonly ILogger<TasksController> _logger;
 
 		/// <summary>
 		///	Creates a new <see cref="TasksController"/>.
 		/// </summary>
 		/// <param name="tasksService">Domain service for task operations.</param>
-        public TasksController(ITasksService tasksService)
+		public TasksController(ITasksService tasksService, ILogger<TasksController> logger)
         {
-            _tasksService = tasksService;
+			_tasksService = tasksService;
+			_logger = logger;
         }
 
 		/// <summary>
@@ -29,7 +32,8 @@ namespace TaskApp.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TasksDto>>> GetAll()
         {
-            var tasks = await _tasksService.GetAllAsync();
+			_logger.LogInformation("Handling {Action} at {Time}", nameof(GetAll), DateTime.UtcNow);
+			var tasks = await _tasksService.GetAllAsync();
             return Ok(tasks);
         }
 
@@ -41,9 +45,13 @@ namespace TaskApp.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TasksDto>> GetById(Guid id)
         {
-            var task = await _tasksService.GetByIdAsync(id);
+			_logger.LogInformation("Handling {Action} for Id {Id}", nameof(GetById), id);
+			var task = await _tasksService.GetByIdAsync(id);
             if (task == null)
-                return NotFound();
+			{
+				_logger.LogWarning("Task not found for Id {Id}", id);
+				return NotFound();
+			}
 
             return Ok(task);
         }
@@ -58,12 +66,14 @@ namespace TaskApp.Api.Controllers
         {
             try
             {
-                var task = await _tasksService.CreateAsync(createDto);
+				_logger.LogInformation("Creating task with Title {Title}", createDto.Title);
+				var task = await _tasksService.CreateAsync(createDto);
                 return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError(ex, "Error creating task with Title {Title}", createDto.Title);
+				return BadRequest(ex.Message);
             }
         }
 
@@ -77,20 +87,26 @@ namespace TaskApp.Api.Controllers
         public async Task<ActionResult<TasksDto>> Update(Guid id, UpdateTasksDto updateDto)
         {
             if (id != updateDto.Id)
-                return BadRequest("ID mismatch");
+			{
+				_logger.LogWarning("ID mismatch in update. RouteId={RouteId}, BodyId={BodyId}", id, updateDto.Id);
+				return BadRequest("ID mismatch");
+			}
 
             try
             {
-                var task = await _tasksService.UpdateAsync(updateDto);
+				_logger.LogInformation("Updating task {Id}", updateDto.Id);
+				var task = await _tasksService.UpdateAsync(updateDto);
                 return Ok(task);
             }
             catch (ArgumentException ex)
             {
-                return NotFound(ex.Message);
+				_logger.LogWarning(ex, "Task not found while updating {Id}", updateDto.Id);
+				return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError(ex, "Error updating task {Id}", updateDto.Id);
+				return BadRequest(ex.Message);
             }
         }
 
@@ -102,9 +118,13 @@ namespace TaskApp.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var result = await _tasksService.DeleteAsync(id);
+			_logger.LogInformation("Deleting task {Id}", id);
+			var result = await _tasksService.DeleteAsync(id);
             if (!result)
-                return NotFound();
+			{
+				_logger.LogWarning("Delete failed. Task not found {Id}", id);
+				return NotFound();
+			}
 
             return NoContent();
         }

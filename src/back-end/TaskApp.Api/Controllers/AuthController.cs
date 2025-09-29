@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TaskApp.Api.Services;
 using TaskApp.Shared.DTO;
 
@@ -11,15 +12,17 @@ namespace TaskApp.Api.Controllers
 	/// </summary>
     public class AuthController : ControllerBase
     {
-        private readonly BasicAuthService _authService;
+		private readonly BasicAuthService _authService;
+		private readonly ILogger<AuthController> _logger;
 
 		/// <summary>
 		///	Creates a new <see cref="AuthController"/>.
 		/// </summary>
 		/// <param name="authService">Service handling credential validation.</param>
-        public AuthController(BasicAuthService authService)
+		public AuthController(BasicAuthService authService, ILogger<AuthController> logger)
         {
-            _authService = authService;
+			_authService = authService;
+			_logger = logger;
         }
 
 		/// <summary>
@@ -32,6 +35,7 @@ namespace TaskApp.Api.Controllers
         {
             if (string.IsNullOrEmpty(loginDto.Username) || string.IsNullOrEmpty(loginDto.Password))
             {
+				_logger.LogWarning("Login attempt with missing credentials");
                 return BadRequest(new LoginResponseDto
                 {
                     IsValid = false,
@@ -41,6 +45,7 @@ namespace TaskApp.Api.Controllers
 
             var isValid = _authService.ValidateCredentials(loginDto.Username, loginDto.Password);
 
+			_logger.LogInformation("Login attempt for user {Username} valid={IsValid}", loginDto.Username, isValid);
             return Ok(new LoginResponseDto
             {
                 IsValid = isValid,
