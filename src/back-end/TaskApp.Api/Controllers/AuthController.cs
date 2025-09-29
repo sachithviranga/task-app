@@ -6,15 +6,27 @@ namespace TaskApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+	/// <summary>
+	///	Authentication endpoints for basic username/password verification.
+	/// </summary>
     public class AuthController : ControllerBase
     {
         private readonly BasicAuthService _authService;
 
+		/// <summary>
+		///	Creates a new <see cref="AuthController"/>.
+		/// </summary>
+		/// <param name="authService">Service handling credential validation.</param>
         public AuthController(BasicAuthService authService)
         {
             _authService = authService;
         }
 
+		/// <summary>
+		///	Validates user credentials.
+		/// </summary>
+		/// <param name="loginDto">Username and password.</param>
+		/// <returns>200-OK with validation result or 400 if input is invalid.</returns>
         [HttpPost("login")]
         public ActionResult<LoginResponseDto> Login(LoginDto loginDto)
         {

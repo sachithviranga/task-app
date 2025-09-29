@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskApp.Infrastructure", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskApp.Shared", "TaskApp.Shared\TaskApp.Shared.csproj", "{75CF08A6-7FC6-4C23-9BF3-403B0DA173FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskApp.Api.Tests", "TaskApp.Api.Tests\TaskApp.Api.Tests.csproj", "{DE6FEAED-615A-486A-0F7B-8206CF92DE1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{75CF08A6-7FC6-4C23-9BF3-403B0DA173FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75CF08A6-7FC6-4C23-9BF3-403B0DA173FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75CF08A6-7FC6-4C23-9BF3-403B0DA173FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE6FEAED-615A-486A-0F7B-8206CF92DE1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE6FEAED-615A-486A-0F7B-8206CF92DE1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE6FEAED-615A-486A-0F7B-8206CF92DE1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE6FEAED-615A-486A-0F7B-8206CF92DE1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
