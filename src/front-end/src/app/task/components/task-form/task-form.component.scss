@@ -1,0 +1,30 @@
+.form-card {
+  max-width: 500px;   // optional: center the form
+  margin: 0 auto;     // center horizontally
+  padding: 16px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; // 👈 adds spacing between form controls
+  margin-top: 16px;
+}
+
+button {
+  align-self: flex-start; // keep button aligned left (or center if you prefer)
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;   
+  margin-top: 16px;
+}
+
+.add-button {
+  margin-bottom: 16px;
+}
+
+.add-button button {
+  font-weight: 600;
+}

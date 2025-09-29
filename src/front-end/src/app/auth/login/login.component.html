@@ -1,0 +1,62 @@
+<div class="login-container">
+  <div class="login-background">
+    <div class="login-content">
+      <mat-card class="login-card">
+        <mat-card-header class="login-header">
+          <mat-card-title class="login-title">
+            <mat-icon class="login-icon">task_alt</mat-icon>
+            Task Manager
+          </mat-card-title>
+          <mat-card-subtitle>Sign in to your account</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content class="login-form">
+          <form (ngSubmit)="login()" #loginForm="ngForm">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Username</mat-label>
+              <input 
+                matInput 
+                [(ngModel)]="username" 
+                name="username"
+                required 
+    
+                placeholder="Enter your username" />
+              <mat-icon matPrefix>person</mat-icon>
+            </mat-form-field>
+            <!-- [disabled]="loading$ | async" -->
+
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Password</mat-label>
+              <input 
+                matInput 
+                type="password" 
+                [(ngModel)]="password" 
+                name="password"
+                required 
+                
+                placeholder="Enter your password" />
+              <mat-icon matPrefix>lock</mat-icon>
+            </mat-form-field>
+
+            <div class="login-actions">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                type="submit"
+                class="login-button"
+                [disabled]="!username.trim() || !password.trim()">
+                <mat-spinner *ngIf="loading$ | async" diameter="20" class="button-spinner"></mat-spinner> 
+                <mat-icon *ngIf="!(loading$ | async)">login</mat-icon>
+                {{ (loading$ | async) ? 'Signing In...' : 'Sign In' }}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+
+        <mat-card-footer class="login-footer">
+        </mat-card-footer>
+      </mat-card>
+    </div>
+  </div>
+</div>
