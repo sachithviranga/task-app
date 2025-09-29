@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using TaskApp.Api.Controllers;
 using TaskApp.Api.Tests.Data;
@@ -12,20 +13,24 @@ namespace TaskApp.Api.Tests.Controllers
 	/// </summary>
 	public class TasksControllerTests
 	{
-		/// <summary>
-		///	Ensures <see cref="TasksController.GetAll"/> returns 200-OK with the service data.
-		/// </summary>
-		[Fact]
+
+        private readonly Mock<ILogger<TasksController>> _loggerMock = new();
+        private readonly Mock<ITasksService> _mockService = new();
+        private TasksController _controller => new(_mockService.Object, _loggerMock.Object);
+
+        /// <summary>
+        ///	Ensures <see cref="TasksController.GetAll"/> returns 200-OK with the service data.
+        /// </summary>
+        [Fact]
 		public async Task GetAll_ReturnsOk_WithTasks()
 		{
-			// Arrange: mock service to return a known set of tasks
-			var mockService = new Mock<ITasksService>();
-			mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(TestData.Tasks);
+            // Arrange: mock service to return a known set of tasks
+            _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(TestData.Tasks);
 
-			var controller = new TasksController(mockService.Object);
+
 
 			// Act
-			var result = await controller.GetAll();
+			var result = await _controller.GetAll();
 
 			// Assert
 			var ok = Assert.IsType<OkObjectResult>(result.Result);
@@ -40,12 +45,10 @@ namespace TaskApp.Api.Tests.Controllers
 		public async Task GetById_NotFound_WhenMissing()
 		{
 			// Arrange
-			var mockService = new Mock<ITasksService>();
-			mockService.Setup(s => s.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((TasksDto?)null);
-			var controller = new TasksController(mockService.Object);
+			_mockService.Setup(s => s.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((TasksDto?)null);
 
 			// Act
-			var result = await controller.GetById(Guid.NewGuid());
+			var result = await _controller.GetById(Guid.NewGuid());
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result.Result);
@@ -58,14 +61,13 @@ namespace TaskApp.Api.Tests.Controllers
 		public async Task Create_ReturnsCreatedAt_WithTask()
 		{
 			// Arrange
-			var mockService = new Mock<ITasksService>();
 			var create = new CreateTasksDto { Title = "Title", Description = "Desc", StatusId = 1 };
 			var created = new TasksDto { Id = Guid.NewGuid(), Title = create.Title, Description = create.Description, StatusId = create.StatusId };
-			mockService.Setup(s => s.CreateAsync(create)).ReturnsAsync(created);
-			var controller = new TasksController(mockService.Object);
+			_mockService.Setup(s => s.CreateAsync(create)).ReturnsAsync(created);
+
 
 			// Act
-			var result = await controller.Create(create);
+			var result = await _controller.Create(create);
 
 			// Assert
 			var createdAt = Assert.IsType<CreatedAtActionResult>(result.Result);
@@ -80,12 +82,10 @@ namespace TaskApp.Api.Tests.Controllers
 		public async Task Update_ReturnsBadRequest_OnIdMismatch()
 		{
 			// Arrange
-			var mockService = new Mock<ITasksService>();
-			var controller = new TasksController(mockService.Object);
 			var dto = new UpdateTasksDto { Id = Guid.NewGuid(), Title = "Title", Description = "Desc", StatusId = 2 };
 
 			// Act
-			var result = await controller.Update(Guid.NewGuid(), dto);
+			var result = await _controller.Update(Guid.NewGuid(), dto);
 
 			// Assert
 			var bad = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -99,12 +99,10 @@ namespace TaskApp.Api.Tests.Controllers
 		public async Task Delete_ReturnsNoContent_OnSuccess()
 		{
 			// Arrange
-			var mockService = new Mock<ITasksService>();
-			mockService.Setup(s => s.DeleteAsync(It.IsAny<Guid>())).ReturnsAsync(true);
-			var controller = new TasksController(mockService.Object);
+			_mockService.Setup(s => s.DeleteAsync(It.IsAny<Guid>())).ReturnsAsync(true);
 
 			// Act
-			var result = await controller.Delete(Guid.NewGuid());
+			var result = await _controller.Delete(Guid.NewGuid());
 
 			// Assert
 			Assert.IsType<NoContentResult>(result);
@@ -117,12 +115,10 @@ namespace TaskApp.Api.Tests.Controllers
 		public async Task Delete_ReturnsNotFound_OnFailure()
 		{
 			// Arrange
-			var mockService = new Mock<ITasksService>();
-			mockService.Setup(s => s.DeleteAsync(It.IsAny<Guid>())).ReturnsAsync(false);
-			var controller = new TasksController(mockService.Object);
+			_mockService.Setup(s => s.DeleteAsync(It.IsAny<Guid>())).ReturnsAsync(false);
 
 			// Act
-			var result = await controller.Delete(Guid.NewGuid());
+			var result = await _controller.Delete(Guid.NewGuid());
 
 			// Assert
 			Assert.IsType<NotFoundResult>(result);

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using TaskApp.Api.Controllers;
 using TaskApp.Api.Tests.Data;
@@ -20,11 +21,13 @@ namespace TaskApp.Api.Tests.Controllers
 		{
 			// Arrange: create a mock of the domain service and seed known return data
 			var mockService = new Mock<IStatusService>();
+			var loggerMock = new Mock<ILogger<StatusController>>();
 
-			mockService.Setup(s => s.GetAllAsync())
+
+            mockService.Setup(s => s.GetAllAsync())
 				.ReturnsAsync(TestData.Statuses);
 
-			var controller = new StatusController(mockService.Object);
+			var controller = new StatusController(mockService.Object, loggerMock.Object);
 
 			// Act: call the controller action under test
 			var result = await controller.GetAll();

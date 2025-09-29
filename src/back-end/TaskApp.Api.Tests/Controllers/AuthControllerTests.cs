@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
 using TaskApp.Api.Controllers;
 using TaskApp.Api.Services;
 using TaskApp.Shared.DTO;
@@ -11,11 +13,15 @@ namespace TaskApp.Api.Tests.Controllers
 	/// </summary>
 	public class AuthControllerTests
 	{
-		/// <summary>
-		///	Builds a <see cref="BasicAuthService"/> wired to an in-memory configuration
-		/// so we can deterministically validate credentials.
-		/// </summary>
-		private static BasicAuthService CreateAuthService(string username, string password)
+        private readonly Mock<ILogger<AuthController>> _loggerMock = new();
+        private readonly BasicAuthService _mockService = CreateAuthService("admin", "pass");
+        private AuthController _controller => new(_mockService, _loggerMock.Object);
+
+        /// <summary>
+        ///	Builds a <see cref="BasicAuthService"/> wired to an in-memory configuration
+        /// so we can deterministically validate credentials.
+        /// </summary>
+        private static BasicAuthService CreateAuthService(string username, string password)
 		{
 			var inMemorySettings = new Dictionary<string, string?>
 			{
@@ -35,11 +41,10 @@ namespace TaskApp.Api.Tests.Controllers
 		public void Login_ReturnsBadRequest_WhenMissingCredentials()
 		{
 			// Arrange
-			var service = CreateAuthService("admin", "pass");
-			var controller = new AuthController(service);
+
 
 			// Act
-			var result = controller.Login(new LoginDto { Username = "", Password = "" });
+			var result = _controller.Login(new LoginDto { Username = "", Password = "" });
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -52,11 +57,9 @@ namespace TaskApp.Api.Tests.Controllers
 		public void Login_ReturnsOk_WithValidCredentials()
 		{
 			// Arrange
-			var service = CreateAuthService("admin", "pass");
-			var controller = new AuthController(service);
 
 			// Act
-			var result = controller.Login(new LoginDto { Username = "admin", Password = "pass" });
+			var result = _controller.Login(new LoginDto { Username = "admin", Password = "pass" });
 
 			// Assert
 			var ok = Assert.IsType<OkObjectResult>(result.Result);
@@ -71,11 +74,9 @@ namespace TaskApp.Api.Tests.Controllers
 		public void Login_ReturnsOk_WithInvalidCredentials()
 		{
 			// Arrange
-			var service = CreateAuthService("admin", "pass");
-			var controller = new AuthController(service);
 
 			// Act
-			var result = controller.Login(new LoginDto { Username = "admin", Password = "wrong" });
+			var result = _controller.Login(new LoginDto { Username = "admin", Password = "wrong" });
 
 			// Assert
 			var ok = Assert.IsType<OkObjectResult>(result.Result);
