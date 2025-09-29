@@ -18,10 +18,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore
-        run: dotnet restore src/back-end/TaskApp.Api/TaskApp.Api.Tests.csproj
+        run: dotnet restore src/back-end/TaskApp.Api.Tests/TaskApp.Api.Tests.csproj
 
       - name: Build
-        run: dotnet build src/back-end/TaskApp.Api/TaskApp.Api.Tests.csproj --no-restore --configuration Release
+        run: dotnet build src/back-end/TaskApp.Api.Tests/TaskApp.Api.Tests.csproj --no-restore --configuration Release
 
       - name: Run tests
-        run: dotnet test src/back-end/TaskApp.Api/TaskApp.Api.Tests.csproj --no-build --configuration Release --logger "trx"
+        run: dotnet test src/back-end/TaskApp.Api.Tests/TaskApp.Api.Tests.csproj --no-build --configuration Release --logger "trx"
